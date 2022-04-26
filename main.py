@@ -2,41 +2,26 @@ from random import randrange
 from time import sleep
 from Crypto.Util.number import getPrime, GCD, getRandomInteger, inverse
 
-#the length of q,p, e, and d default to 16 bits for computational speed, but can be changed with this value:
-bits = 16
-
 #these two functions turn the message from ascii to decimal and then back to ascii again after decryption 
 def buildMessage(message):
     asciiMessage = []
     for x in message:
         if len(str(ord(x))) == 2:
-            asciiMessage.append(str("0"+str(ord(x))))
+            asciiMessage.append(int("0"+str(ord(x))))
         else:
-            asciiMessage.append(str(ord(x)))
-    string = asciiMessage[0]
-    asciiMessage.remove(string)
-    for item in asciiMessage:
-        string = string+item
-    return int(string)
+            asciiMessage.append(int(ord(x)))
+    print(asciiMessage)
+    return asciiMessage
 
 def rebuildMessage(decrypted):
-    if len(decrypted)%2 != 0:
-        decrypted = str('0'+decrypted)
-    message = []
-    letters = ''
-    string = str(decrypted)
-    i = 0
-    while i < len(str(decrypted)):
-        message.append(string[i:i+3])
-        i+=3
-    for x in message:
-        num = chr(int(x))
-        letters += num
-    return letters
+    message = ''
+    for char in decrypted:
+        message = message+chr(int(char))
+    return message
 
 #use the getPrime from cryptodome to generate two prime numbers of N-bits
-p = getPrime(bits)
-q = getPrime(bits)
+p = getPrime(8)
+q = getPrime(8)
 
 m = buildMessage(str(input("Message to Encrypt: ")))
 n = p*q
@@ -49,22 +34,35 @@ def findE(bits):
             num = getRandomInteger(bits)
         return num
 
-#rudementary defense againt timing attack
-sleep(randrange(10))
 
 
-e = findE(bits)
+
+e = findE(5)
 d = inverse(e,euler)
 
-#key calculations, this is the most computationally expensive part
-exp = m**e
-encrypted = exp%n
-dexp = encrypted**d
-decrypted = dexp%n
 
-
-#lots of print statements for every variable for debugging purposes, the important ones are un-commmented 
+##key calculations, this is the most computationally expensive part
+encrypted = []
+for num in m:
+    encrypted.append(num**e%n)
+    #rudementary defense againt timing attack
+    sleep(randrange(3))
 print('Encryption Complete\n')
+print('Encrypted Message: ',encrypted)
+
+decrypted = []
+for num in encrypted:
+    #rudementary defense againt timing attack
+    sleep(randrange(3))
+    decrypted.append(num**d%n)
+
+print('dec = ',decrypted)
+print('Decrypted Message: ',rebuildMessage(decrypted))
+
+
+
+#lots of print statements for every variable for debugging purposes
+
 #print(euler)
 #print('p = ',p)
 #print('q = ',q,'\n')
@@ -72,7 +70,4 @@ print('Encryption Complete\n')
 #print('d = ',d)
 #print('euler = ', euler, '\n')
 #print('m = ', m)
-print('Encrypted Message: ',encrypted)
-#print('dec = ',decrypted)
 #print(decrypted)
-print('Decrypted Message: ',rebuildMessage(str(decrypted)))
