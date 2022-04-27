@@ -1,4 +1,4 @@
-from random import randrange
+import secrets
 from time import sleep
 from Crypto.Util.number import getPrime, GCD, getRandomInteger, inverse
 
@@ -19,7 +19,7 @@ def rebuildMessage(decrypted):
         message = message+chr(int(char))
     return message
 
-#use the getPrime from cryptodome to generate two prime numbers of N-bits
+#use the getPrime from Cryptodome to generate two prime numbers of N-bits
 p = getPrime(8)
 q = getPrime(8)
 
@@ -41,19 +41,19 @@ e = findE(5)
 d = inverse(e,euler)
 
 
-##key calculations, this is the most computationally expensive part
+#key calculations, this is the most computationally expensive part
 encrypted = []
 for num in m:
     encrypted.append(num**e%n)
-    #rudementary defense againt timing attack
-    sleep(randrange(3))
+    #rudementary defense against timing attack
+    sleep(secrets.randbelow(5))
 print('Encryption Complete\n')
 print('Encrypted Message: ',encrypted)
 
 decrypted = []
 for num in encrypted:
-    #rudementary defense againt timing attack
-    sleep(randrange(3))
+    #rudementary defense against timing attack
+    sleep(secrets.randbelow(5))
     decrypted.append(num**d%n)
 
 print('dec = ',decrypted)
@@ -61,7 +61,7 @@ print('Decrypted Message: ',rebuildMessage(decrypted))
 
 
 
-#lots of print statements for every variable for debugging purposes
+#lots of print statements of every variable for debugging purposes
 
 #print(euler)
 #print('p = ',p)
