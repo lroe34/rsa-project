@@ -15,7 +15,7 @@ class rsaModule:
                 asciiMessage.append(int("0"+str(ord(x))))
             else:
                 asciiMessage.append(int(ord(x)))
-        print(asciiMessage)
+#        print(asciiMessage)
         return asciiMessage
 
 
@@ -26,25 +26,30 @@ class rsaModule:
             encrypted.append(num**self.e%self.n)
             #rudementary defense against timing attack
 
-        print('Encryption Complete\n')
-        print('Encrypted Message: ',encrypted)
-        print('\nDecryption Key:', self.d)
+#        print('Encryption Complete\n')
+#        print('Encrypted Message: ',encrypted)
+#        print('\nDecryption Key:', self.d)
         return encrypted
 
     def decrypt(self,encrypted):
         decrypted = []
         
-        print(encrypted)
+#        print(encrypted)
         for num in encrypted:
         #rudementary defense against timing attack
 
             decrypted.append(num**self.d%self.n)
-        print('\ndec = ',decrypted)
+#        print('\ndec = ',decrypted)
         return decrypted
 
     def reconstructMessage(self,decrypted):
         message = ''
-        for char in decrypted:
-            message = message+chr(int(char))
-        return message
-
+        try:
+            for char in decrypted:
+                if int(char) < 255:
+                    message = message+chr(int(char))
+                else:
+                    raise ValueError
+            return message
+        except:
+            return 'ERROR: Please Try Again'
